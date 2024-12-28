@@ -39,10 +39,7 @@ func StartCLI(ctx *cli.Context) error {
 			fmt.Println("enter the amount for debit")
 			debitAmount := readInputAmount(reader)
 			DebitAmount(debitAmount)
-		case "3":
-			fmt.Println("exisiting...")
-			return nil
-		case "exit":
+		case "3", "exit":
 			fmt.Println("exisiting...")
 			return nil
 		default:
@@ -52,6 +49,30 @@ func StartCLI(ctx *cli.Context) error {
 
 	// return nil
 }
+
+func SetCurrency(ctx *cli.Context) error {
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Println("enter the currency for transaction")
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
+	input = strings.TrimSpace(input)
+
+	var curr Amount
+	file, _ := os.ReadFile("balance.json")
+	json.Unmarshal(file, &curr)
+	fmt.Println("currency is", input)
+	curr.Currency = input
+
+	abc, _ := json.Marshal(curr)
+	fmt.Println(curr)
+	os.WriteFile("balance.json", abc, 0644)
+
+	return nil
+
+}
 func readInputAmount(reader *bufio.Reader) float64 {
 
 	inputAmount, _ := reader.ReadString('\n')
@@ -59,45 +80,10 @@ func readInputAmount(reader *bufio.Reader) float64 {
 	creditAmount, _ := strconv.ParseFloat(inputAmount, 64)
 	return creditAmount
 }
-func CreditAmount(amount float64) error {
-
-	balance := checkBalance()
-	balance.Balance = balance.Balance + int(amount)
-	updateData, _ := json.Marshal(balance)
-	updateDataa := os.WriteFile("balance.json", updateData, 0644)
-	fmt.Println(" current balance is", balance)
-
-	if updateDataa != nil {
-		log.Printf(" some error occured")
-	}
-	return nil
-}
-
-func DebitAmount(amount float64) error {
-
-	balance := checkBalance()
-
-	if int(amount) > (balance.Balance) {
-		log.Error("input amount ", amount, " is more than available balance ", balance.Balance)
-		return fmt.Errorf("input amount is more than available balance")
-
-	}
-
-	balance.Balance = balance.Balance - int(amount)
-
-	updateData, _ := json.Marshal(balance)
-	updateDataa := os.WriteFile("balance.json", updateData, 0644)
-	if updateDataa != nil {
-		log.Printf("input amount is more than available balance")
-
-	}
-	fmt.Println(" current balance is", balance)
-	return nil
-
-}
 
 type Amount struct {
-	Balance int `json:"balance"`
+	Balance  int    `json:"balance"`
+	Currency string `json:"currency"`
 }
 
 func checkBalance() Amount {
@@ -108,4 +94,40 @@ func checkBalance() Amount {
 		fmt.Println(err)
 	}
 	return amount
+}
+
+func CreditAmount(amount float64) error {
+
+	balance := checkBalance()
+	balance.Balance += int(amount)
+
+	updateAmount(balance)
+	return nil
+}
+
+func DebitAmount(amount float64) error {
+
+	balance := checkBalance()
+
+	if int(amount) > (balance.Balance) {
+		log.Errorf("input amount ", amount, " is more than available balance ", balance.Balance)
+		return fmt.Errorf("input amount is more than available balance")
+	}
+
+	balance.Balance -= int(amount)
+
+	updateAmount(balance)
+	return nil
+
+}
+
+func updateAmount(balance Amount) (Amount, error) {
+	updateData, _ := json.Marshal(balance)
+	updateDataa := os.WriteFile("balance.json", updateData, 0644)
+	if updateDataa != nil {
+		log.Printf("input amount is more than available balance")
+
+	}
+	fmt.Println(" current balance is", balance)
+	return balance, nil
 }

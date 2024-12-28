@@ -19,6 +19,11 @@ func main() {
 				Usage:  "start the session",
 				Action: pkg.StartCLI,
 			},
+			{
+				Name:   "setting",
+				Usage:  "allow user to set currency",
+				Action: pkg.SetCurrency,
+			},
 		},
 	}
 
