@@ -25,22 +25,19 @@ func StartCLI(ctx *cli.Context) error {
 		fmt.Println("choose an option b/w 1-2 type 'exit' or 3 for exit")
 
 		input, _ := reader.ReadString('\n')
+		fmt.Println("input", input)
+		//input = input + "   "
 		input = strings.TrimSpace(input)
 
 		switch input {
 		case "1":
 			fmt.Println("enter the amount for credit")
-
-			inputAmount, _ := reader.ReadString('\n')
-			inputAmount = strings.TrimSpace(inputAmount)
-			creditAmount, _ := strconv.ParseFloat(inputAmount, 64)
+			creditAmount := readInputAmount(reader)
 			CreditAmount(creditAmount)
 
 		case "2":
 			fmt.Println("enter the amount for debit")
-			inputAmount, _ := reader.ReadString('\n')
-			inputAmount = strings.TrimSpace(inputAmount)
-			debitAmount, _ := strconv.ParseFloat(inputAmount, 64)
+			debitAmount := readInputAmount(reader)
 			DebitAmount(debitAmount)
 		case "3":
 			fmt.Println("exisiting...")
@@ -55,7 +52,13 @@ func StartCLI(ctx *cli.Context) error {
 
 	// return nil
 }
+func readInputAmount(reader *bufio.Reader) float64 {
 
+	inputAmount, _ := reader.ReadString('\n')
+	inputAmount = strings.TrimSpace(inputAmount)
+	creditAmount, _ := strconv.ParseFloat(inputAmount, 64)
+	return creditAmount
+}
 func CreditAmount(amount float64) error {
 
 	balance := checkBalance()
@@ -75,7 +78,7 @@ func DebitAmount(amount float64) error {
 	balance := checkBalance()
 
 	if int(amount) > (balance.Balance) {
-		log.Error("input amount is more than available balance")
+		log.Error("input amount ", amount, " is more than available balance ", balance.Balance)
 		return fmt.Errorf("input amount is more than available balance")
 
 	}
