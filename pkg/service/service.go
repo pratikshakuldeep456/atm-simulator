@@ -32,6 +32,7 @@ func CheckBalance(store store.StoreSerivce, reader *bufio.Reader) (int, error) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+	fmt.Println("available balance", data)
 	return data, nil
 }
 func readInputAmount(reader *bufio.Reader) float64 {

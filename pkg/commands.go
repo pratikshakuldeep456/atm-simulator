@@ -32,11 +32,20 @@ func StartCLI(ctx *cli.Context) error {
 
 		switch input {
 		case "1":
-			service.CreditAmount(fs, reader)
+			err := service.CreditAmount(fs, reader)
+			if err != nil {
+				fmt.Print(err)
+			}
 		case "2":
-			service.DebitAmount(fs, reader)
+			err := (service.DebitAmount(fs, reader))
+			if err != nil {
+				fmt.Print(err)
+			}
 		case "3":
-			service.CheckBalance(fs, reader)
+			_, err := service.CheckBalance(fs, reader)
+			if err != nil {
+				fmt.Print(err)
+			}
 		case "4", "exit":
 			fmt.Println("exisiting...")
 			return nil

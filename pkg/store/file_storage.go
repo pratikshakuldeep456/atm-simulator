@@ -70,6 +70,11 @@ func (fs *FileStorage) DebitAmount(amt int) error {
 	if err != nil {
 		return fmt.Errorf("err occured while fetching balance", err)
 	}
+
+	if amt > balance {
+		return fmt.Errorf(" input amount is more than available")
+
+	}
 	balance -= amt
 
 	fmt.Println("current balace is", balance)
