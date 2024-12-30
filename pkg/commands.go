@@ -12,8 +12,8 @@ import (
 )
 
 func StartCLI(ctx *cli.Context) error {
-
-	fs := store.GetStore("file_storage")
+	filepath := "balance.json"
+	fs := store.GetStore("file_storage", filepath)
 	fmt.Println(fs.CheckBalance())
 
 	reader := bufio.NewReader(os.Stdin)

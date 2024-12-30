@@ -7,14 +7,22 @@ import (
 )
 
 type FileStorage struct {
+	FilePath string
 }
 
-func NewFileStorage() *FileStorage {
-	return &FileStorage{}
+func NewFileStorage(fp string) *FileStorage {
+	return &FileStorage{FilePath: fp}
 }
 
+func ReadFile(fp string) ([]byte, error) {
+	file, err := os.ReadFile(fp)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return file, nil
+}
 func (fs *FileStorage) CheckBalance() (int, error) {
-	file, _ := os.ReadFile("balance.json")
+	file, _ := ReadFile(fs.FilePath)
 	var amount Amount
 	err := json.Unmarshal(file, &amount)
 	if err != nil {
@@ -24,7 +32,7 @@ func (fs *FileStorage) CheckBalance() (int, error) {
 }
 
 func (fs *FileStorage) UpdateAmount(amt int) error {
-	file, _ := os.ReadFile("balance.json")
+	file, _ := ReadFile(fs.FilePath)
 	var amount Amount
 
 	err := json.Unmarshal(file, &amount)
@@ -36,7 +44,7 @@ func (fs *FileStorage) UpdateAmount(amt int) error {
 	if err != nil {
 		fmt.Println(err)
 	}
-	os.WriteFile("balance.json", updateData, 0644)
+	os.WriteFile(fs.FilePath, updateData, 0644)
 	return nil
 }
 

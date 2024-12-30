@@ -18,10 +18,10 @@ type StoreSerivce interface {
 // }
 
 // factory method
-func GetStore(str string) StoreSerivce {
+func GetStore(str string, filePath string) StoreSerivce {
 
 	pg := NewPG()
-	fs := NewFileStorage()
+	fs := NewFileStorage(filePath)
 
 	if str == postgres {
 		return pg
