@@ -20,12 +20,12 @@ type StoreSerivce interface {
 // factory method
 func GetStore(str string) StoreSerivce {
 
-	//	pg := NewPG()
-	//fs := NewFileStorage()
+	pg := NewPG()
+	fs := NewFileStorage()
 
 	if str == postgres {
-		return NewPG()
+		return pg
 	} else {
-		return NewFileStorage()
+		return fs
 	}
 }
